@@ -49,6 +49,13 @@ copy-item -Path c:\Users\Administrator\Desktop\theinvincibleironcat.txt  $datapa
 get-childitem c:\ -filter *theinvincibleironcat* #this version hits the user folder.
 captains_log "IOC - Found ransom notes in all affected directories with the same name and hash only in c:\Users\*. This can be used to look for this acitivity acrosss the enterprise for scoping." $datapath
 
+#Logs Check
+get-winevent 
+
+#volume shadowcopy check
+vssadmin list shadows
+
+
 ## Dump network connection
 ##net connections but then use tcpview and portmon to properly catch beaconing
 captains_log "Running network inspection to look for expected network beaconing behavior related to popup." $datapath
@@ -123,33 +130,37 @@ net user
 lusrmgr
 net local group administrators
 net group administrators
-psloggedon64.exe
-loggedonsessions.exe
+./SysInternalsSuite/psloggedon64.exe
+./SysInternalsSuite/loggedonsessions.exe
 #get-adusers
 
 net use
+
 
 #services
 sc query
 wmic service list config
 
 #autoruns
+./SysInternalsSuite/autoruns64.exe
 
 #scheduled tasks
 schtasks
 
 #disk information
-volumeid64.exe
-diskmon.exe
-ntfsinfo.exe
+./SysInternalsSuite/volumeid64.exe
+./SysInternalsSuite/diskmon.exe
+./SysInternalsSuite/ntfsinfo.exe
+./SysInternalsSuite/DiskView.exe
 
 #additonal process info
-listdll.exe
-handle.exe
+./SysInternalsSuite/listdll.exe
+./SysInternalsSuite/handle.exe
 
 
 #event logs
-#wevutil qe security /f:text
+wevutil qe security /f:text
+
 #logs
 
 new-item -type directory winevent_logs
@@ -158,29 +169,13 @@ copy-item -Recurse -path C:\Windows\System32\Winevt\Logs\ -Destination ./wineven
 
 copy-item -recurse -path C:\Windows\System32\LogFiles\ -Destination ./winevent_logs
 
-#### see cleared events this is one of your first clues!
-get-winevent    #501
-
-
-#Autoruns
-#portmon -> random port! sendback to file find the other ports!
-
-##Logonsessions
-
-##Pendmove
-
-## portmon again different port listening!
-
-##Other Files Use Hash to find original file location. System32
-
-# Full Disk Image
-
-
-
+#full disk image
+## Live boot and use dd
 
 #Module: Network Collection
 #Demo: Network Collection 
 ## Windows Victim Network Connection & Wireshark Analysis
+## https://www.netresec.com/?page=rawcap
  rawpcap.exe $datapath/$computername-init-pcap.pcap # doesn't require install of separate dll
  captains_log "Initial dump of 1 Minute of Packet Capture Created"
 
@@ -202,54 +197,3 @@ zeekcut
 
 
 
-
-
-
-
-
-# Network Dump
-https://www.netresec.com/?page=rawcap
-rawpcap.exe
-
-# Dump memory for later analysis with volatility with procdump
-
-procdump.exe 
-
-
-
-
-
-
-
-#
-
-
-
-
-
-
-# FW Rules
-
-
-# Autoruns
-
-# pipelist
-
-#procmon
-
-#procexp
-
-
-#portmon
-
-
-
-
-
-
-
-
-
-# Network Collection 
-
-# Host Collection
