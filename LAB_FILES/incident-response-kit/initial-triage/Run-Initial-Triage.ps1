@@ -105,7 +105,7 @@ foreach ($c in $computers) {
     arp -a
     get-childitem -Path #if note file ending in ENCRYPTED or HASH matches
     Get-Process #if process like ironcatwuzhere
-    get-nettcpconnection #if port like 8080 but doesn't come back in line with the other behavior!
+    test-nettcpconnection #if port like 8080 but doesn't come back in line with the other behavior!
 }
 
 
