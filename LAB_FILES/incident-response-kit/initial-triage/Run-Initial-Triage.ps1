@@ -1,6 +1,16 @@
-﻿
+﻿#Resources for Incident Response: Detection and Analysis
+#Pluralsight Course: https://app.pluralsight.com/library/courses/incident-response-detection-analysis/table-of-contents
 
+# WinPmem Download Location:
+# https://github.com/Velocidex/WinPmem
 
+# Sysinternals Sutie
+# https://docs.microsoft.com/en-us/sysinternals/
+
+# Rawcap
+# https://www.netresec.com/?page=RawCap
+
+# Remember to decide on the timezone you are using for normalization of actions, logs, and records
 
 # Have to store things somewhere, ideally this is all launched from and recorded to your external media.
 ## Computer name as folder
@@ -21,7 +31,7 @@ function captains_log($entry, $datapath){
 
 
 #creates master station log to record all your actions
-get-date >> ./data/master-station-log.txt
+get-date >> ./$datapath/master-station-log.txt
 Get-TimeZone >> ./$datapath/master-station-log.txt
 Get-NetIPInterface >> $datapath/master-station-log.txt
 Get-NetIPAddress >> $datapath/master-station-log.txt
@@ -112,7 +122,7 @@ $dnsCache | out-file $datapath/dnscache.txt
 ### Host File
 
 ## ARP Cache
-$arpCache  = Get-netnieghbor | select *
+$arpCache  = Get-NetNeighbor | select *
 $arpCache
 $arpCache  | Export-Clixml -Path $datapath/arpcache.xml
 $arpCache | out-file $datapath/arpcache.txt
@@ -125,20 +135,29 @@ $routeTable | out-file $datapath/routetable.txt
 
 #Firewall rules
 
-# users
+# Getting user information on local devices, different from commands used for identifying domain users.
 net user
 lusrmgr
 net local group administrators
 net group administrators
-./SysInternalsSuite/psloggedon64.exe
-./SysInternalsSuite/loggedonsessions.exe
-#get-adusers
 
+
+./SysInternalsSuite/psloggedon64.exe -accepteula
+./SysInternalsSuite/loggedonsessions.exe -accepteula
+
+# Looking for all AD users and associated readable information
+get-adusers -filter "surname -like '*'"
+
+# You can do the same for computers
+get-adcomputers -filter "name -like '*'"
+
+#Attached 
 net use
 
 
 #services
-sc query
+sc query # remember this needs to be ran with "cmd /c" or in a command terminal
+
 wmic service list config
 
 #autoruns
